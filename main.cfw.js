@@ -32,6 +32,11 @@ async function handleRequest(request) {
     }
   }
 
+if (searchQuery.startsWith("!")) {
+  const message = "You're using unintegrated bang! " + searchQuery;
+  return new Response(message, { status: 200 });
+}
+  
   if (success !== 1) {
     const nicerQuery = searchQuery;
     const redirectMeTo = defaultSearch;
