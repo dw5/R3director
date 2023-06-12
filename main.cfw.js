@@ -10,7 +10,7 @@
 
 /* R3director */
 addEventListener('fetch', event => {
-  //event.passThroughOnException() // Optional; you know best
+  event.passThroughOnException() // Optional; you know best
   event.respondWith(handleRequest(event.request))
 })
 
@@ -22,16 +22,29 @@ async function handleRequest(request) {
   let success = 0;
   let debugge = 0;  if (debugParam === 'true') {debugge = 1; console.log("DBG!");}
 
-  debugge 
-
-  const defaultSearch = "https://searx.neocities.org/?q=";
-  const bangs = ["!ddg", "!yt", "!w", "!gt"];
+  const defaultSearch = "https://www.bing.com/search?q=test";
+  const bangs = ["!ddg", "!yt", "!w", "!gt", "!sx"];
   const redirto = [
-    "https://duckduckgo.com/?q=",
-    "https://www.youtube.com/results?search_query=",
-    "https://duckduckgo.com/?q=!w ",
-    "https://translate.google.com/#auto/en/"
+    "https://duckduckgo.com/?q=", //ddg
+    "https://www.youtube.com/results?search_query=", //yt
+    "https://duckduckgo.com/?q=!w ", //w
+    "https://translate.google.com/#auto/en/", //gt
+    "https://searx.neocities.org/?q=" //sx
   ];
+
+  if (request.url.endsWith("/opensearch.xml")) {
+    const hostname = "https://"+request.headers.get('Host');
+    const opensearchXML = `
+      <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+        <ShortName>R3Director</ShortName>
+        <Description>R3Director Search</Description>
+        <InputEncoding>UTF-8</InputEncoding>
+        <Url type="text/html" template="${hostname}/?q={searchTerms}" />
+      </OpenSearchDescription>
+    `;
+
+    return new Response(opensearchXML, { headers: { 'Content-Type': 'application/xml' } });
+  }
 
   if (searchQuery) {
     for (let i = 0; i < bangs.length; i++) {
@@ -92,6 +105,7 @@ async function handleRequest(request) {
         }
       </style><title>R3director</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="R3Director Search">
       <div class="search-container">
         <form class="search-form" action="/" method="get" target="" autocomplete="off">
           <input class="search-bar" autofocus="" name="q" placeholder="R3Director" type="text"> 
