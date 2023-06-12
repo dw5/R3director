@@ -18,9 +18,11 @@ async function handleRequest(request) {
   const url = request.url
   const searchQuery = new URL(request.url).searchParams.get('q');
   const debugParam = new URL(request.url).searchParams.get('debug');
- console.log("QUERY: "+ searchQuery);
+
+ console.log("Q VAL: "+ searchQuery);
+
   let success = 0;
-  let debugge = 0;  if (debugParam === 'true') {debugge = 1; console.log("DBG!");}
+  let debugge = 1;  if (debugParam === 'true') {debugge = 1; console.log("DBG!");}
 
   const defaultSearch = "https://www.bing.com/search?q=";
   const bangs = ["!ddg", "!yt", "!w", "!gt", "!sx"];
@@ -39,7 +41,7 @@ async function handleRequest(request) {
         <ShortName>R3Director</ShortName>
         <Description>R3Director Search</Description>
         <InputEncoding>UTF-8</InputEncoding>
-        <Url type="text/html" template="${hostname}/?q={searchTerms}" />
+        <Url type="text/html" method="get" template="${hostname}/?q={searchTerms}" />
       </OpenSearchDescription>
     `;
 
@@ -47,15 +49,16 @@ async function handleRequest(request) {
   }
 
   if (searchQuery) {
+    
     for (let i = 0; i < bangs.length; i++) {
       if (searchQuery.startsWith(bangs[i])) {
-        const nicerQuery = searchQuery.replace(bangs[i] + " ", "");
+        const nicerQuery = encodeURI(searchQuery.replace(bangs[i] + " ", ""));
         const redirectMeTo = redirto[i];
         success = 1;
 
         if (debugge === 1) {
           console.log("BANG SEEN");
-          console.log(nicerQuery);
+          console.log("ACTUAL QUERY:" + nicerQuery);
           console.log(redirectMeTo);
         }
 
@@ -116,7 +119,7 @@ async function handleRequest(request) {
     return new Response(form, { headers: { 'Content-Type': 'text/html' } });
   }
 
-  const nicerQuery = searchQuery || "";
+  const nicerQuery = encodeURI(searchQuery) || "";
   const redirectMeTo = defaultSearch;
 
   if (debugge === 1) {
