@@ -22,7 +22,7 @@ async function handleRequest(request) {
   let success = 0;
   let debugge = 0;  if (debugParam === 'true') {debugge = 1; console.log("DBG!");}
 
-  const defaultSearch = "https://www.bing.com/search?q=test";
+  const defaultSearch = "https://www.bing.com/search?q=";
   const bangs = ["!ddg", "!yt", "!w", "!gt", "!sx"];
   const redirto = [
     "https://duckduckgo.com/?q=", //ddg
