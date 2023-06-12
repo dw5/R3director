@@ -52,7 +52,7 @@ async function handleRequest(request) {
     
     for (let i = 0; i < bangs.length; i++) {
       if (searchQuery.startsWith(bangs[i])) {
-        const nicerQuery = encodeURI(searchQuery.replace(bangs[i] + " ", ""));
+        const nicerQuery = encodeURIComponent(searchQuery.replace(bangs[i] + " ", ""));
         const redirectMeTo = redirto[i];
         success = 1;
 
@@ -119,7 +119,7 @@ async function handleRequest(request) {
     return new Response(form, { headers: { 'Content-Type': 'text/html' } });
   }
 
-  const nicerQuery = encodeURI(searchQuery) || "";
+  const nicerQuery = encodeURIComponent(searchQuery) || "";
   const redirectMeTo = defaultSearch;
 
   if (debugge === 1) {
